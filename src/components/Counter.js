@@ -1,23 +1,21 @@
 import React, {Component} from 'react'
-import {observable} from 'mobx'
 import {observer} from 'mobx-react'
+
 
 @observer class Counter extends Component {
 
-  @observable count = 0
-
   handleInc = () => {
-    this.count ++
+    this.props.store.increment()
   }
 
   handleDec = () => {
-    this.count --
+    this.props.store.decrement()
   }
 
   render(){
     return (
       <div>
-        Counter: {this.count}
+        Counter: {this.props.store.count}
         <button onClick={this.handleInc}>+</button>
         <button onClick={this.handleDec}>-</button>
       </div>

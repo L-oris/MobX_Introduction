@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import Counter from './components/Counter'
+import appState from './mobX/store'
 
 class App extends Component {
   render() {
@@ -7,7 +8,7 @@ class App extends Component {
       <div className="App">
         <h1>Welcome to React</h1>
 
-        <Counter />
+        <Counter store={appState}/>,
       </div>
     )
   }
