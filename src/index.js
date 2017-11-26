@@ -4,7 +4,7 @@ import registerServiceWorker from './registerServiceWorker'
 
 import React from 'react'
 import ReactDOM from 'react-dom'
-import {observable, computed} from 'mobx'
+import {observable, asMap, computed, action} from 'mobx'
 import {observer} from 'mobx-react'
 
 
@@ -30,31 +30,33 @@ class Temperature {
     }
   }
 
+  @action setUnit(newUnit){
+    this.unit = newUnit
+  }
+
 }
 
-const temps = observable([])
-
-//add new temperatures to observable array
-temps.push(new Temperature())
-temps.push(new Temperature())
-
-
-//attach 'temps' to browser window to manually change & debug it
-window.temps = temps
+const temps = observable(asMap({
+  "Amsterdam": new Temperature(),
+  "Rome": new Temperature()
+}))
 
 
 const Temper = observer(({temperatures}) => (
 
   <div>
-    {temperatures.map(t =>
+    {temperatures.entries().map(([city,t]) =>
       <div key={t.id}>
-        {t.temperature}
+        {city}: {t.temperature}
       </div>
     )}
   </div>
 
 ))
 
+
+//attach 'temps' to  window to manually change & debug
+window.temps = temps
 
 ReactDOM.render(
   <Temper temperatures={temps} />,
