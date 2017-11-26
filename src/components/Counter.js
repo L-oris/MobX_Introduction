@@ -1,12 +1,18 @@
 import React, {Component} from 'react'
+import {observable} from 'mobx'
+import {observer} from 'mobx-react'
 
-class Counter extends Component {
+@observer class Counter extends Component {
 
-  count = 0
+  @observable count = 0
 
-  handleInc = () => {}
+  handleInc = () => {
+    this.count ++
+  }
 
-  handleDec = () => {}
+  handleDec = () => {
+    this.count --
+  }
 
   render(){
     return (
