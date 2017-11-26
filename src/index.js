@@ -4,25 +4,30 @@ import registerServiceWorker from './registerServiceWorker'
 
 import React from 'react'
 import ReactDOM from 'react-dom'
-import {observable, asMap, computed, action} from 'mobx'
+import {observable, asMap, computed, action, useStrict} from 'mobx'
 import {observer} from 'mobx-react'
 
+//avoid state modifications without using @actions
+useStrict(true)
 
-class Temperature {
+const t = new class Temperature {
 
   id = Math.random()
   @observable unit = 'C'
   @observable temperatureCelsius = 25
 
   @computed get temperatureFahrenheit(){
+    console.log('Calculating Fahrenheit')
     return this.temperatureCelsius * (9/5) + 32
   }
 
   @computed get temperatureKelvin(){
+    console.log('Calculating Kelvin')
     return this.temperatureCelsius + 273.15
   }
 
   @computed get temperature(){
+    console.log('Calculating temperature')
     switch(this.unit){
       case "C": return this.temperatureCelsius
       case "F": return this.temperatureFahrenheit
@@ -34,32 +39,31 @@ class Temperature {
     this.unit = newUnit
   }
 
-}
+  @action setCelsius(degrees){
+    this.temperatureCelsius = degrees
+  }
 
-const temps = observable(asMap({
-  "Amsterdam": new Temperature(),
-  "Rome": new Temperature()
-}))
+  @action('update temperature and unit') setTemperatureAndUnit(degrees,unit){
+    this.setCelsius(degrees)
+    this.setUnit(unit)
+  }
+
+}()
 
 
-const Temper = observer(({temperatures}) => (
-
+const Temper = observer(({temperature}) => (
   <div>
-    {temperatures.entries().map(([city,t]) =>
-      <div key={t.id}>
-        {city}: {t.temperature}
-      </div>
-    )}
+    {temperature.temperature}
   </div>
-
 ))
 
 
-//attach 'temps' to  window to manually change & debug
-window.temps = temps
-
 ReactDOM.render(
-  <Temper temperatures={temps} />,
+  <Temper temperature={t} />,
   document.getElementById('root'))
+
+
+//attach 'temps' to  window to manually change & debug
+window.t = t
 
 registerServiceWorker()
